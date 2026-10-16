@@ -22,6 +22,16 @@ function fechaNoFutura(control: AbstractControl): ValidationErrors | null {
   return control.value > hoyISO() ? { fechaFutura: true } : null;
 }
 
+// Resumen SHA-256 en hexadecimal con la Web Crypto API del navegador (no necesita librerías).
+// Es un hash de un solo sentido: no se puede "descifrar" para recuperar la contraseña original.
+async function hashSHA256(texto: string): Promise<string> {
+  const bytes = new TextEncoder().encode(texto);
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 interface DatosRegistro {
   nombre: string;
   email: string;
@@ -29,9 +39,9 @@ interface DatosRegistro {
 }
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-registro',
+  templateUrl: 'registro.page.html',
+  styleUrls: ['registro.page.scss'],
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -39,7 +49,7 @@ interface DatosRegistro {
     IonList, IonItem, IonInput, IonButton, IonSpinner
   ],
 })
-export class HomePage {
+export class RegistroPage {
   private fb = inject(FormBuilder);
   private alertCtrl = inject(AlertController);
 
@@ -69,7 +79,12 @@ export class HomePage {
     }
     this.isSubmitting.set(true);
     try {
-      console.log('Payload a enviar a la API REST:', this.registroForm.value);
+      // Se sustituye la contraseña por su hash antes de mostrarla o enviarla
+      const payload = {
+        ...this.registroForm.value,
+        password: await hashSHA256(this.registroForm.value.password),
+      };
+      console.log('Payload a enviar a la API REST:', payload);
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       const { nombre, email, fechaNacimiento } = this.registroForm.value;
