@@ -2,8 +2,9 @@
   <ion-toolbar color="primary">
     <ion-title>Registro de Usuario</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="toggleModoOscuro()">
-        {{ modoOscuro() ? 'Modo claro' : 'Modo oscuro' }}
+      <!-- Solo icono para que quepa en móvil; aria-label lo describe para lectores de pantalla -->
+      <ion-button (click)="toggleModoOscuro()" [attr.aria-label]="modoOscuro() ? 'Activar modo claro' : 'Activar modo oscuro'">
+        <ion-icon slot="icon-only" [name]="modoOscuro() ? 'sunny' : 'moon'"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

@@ -4,8 +4,10 @@ import {
 } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonList, IonItem, IonInput, IonButton, IonSpinner, AlertController
+  IonList, IonItem, IonInput, IonButton, IonSpinner, IonIcon, AlertController
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { moon, sunny } from 'ionicons/icons';
 import { jsPDF } from 'jspdf';
 
 // Fecha de hoy en formato 'YYYY-MM-DD', el mismo que usa <input type="date">
@@ -46,12 +48,17 @@ interface DatosRegistro {
   imports: [
     ReactiveFormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonList, IonItem, IonInput, IonButton, IonSpinner
+    IonList, IonItem, IonInput, IonButton, IonSpinner, IonIcon
   ],
 })
 export class RegistroPage {
   private fb = inject(FormBuilder);
   private alertCtrl = inject(AlertController);
+
+  constructor() {
+    // En standalone, los iconos de ionicons hay que registrarlos antes de usarlos en el HTML
+    addIcons({ moon, sunny });
+  }
 
   public registroForm: FormGroup = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
