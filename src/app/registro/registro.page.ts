@@ -1,7 +1,6 @@
 import { Component, signal, inject } from '@angular/core';
-import {
-  ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors
-} from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
   IonList, IonItem, IonInput, IonButton, IonSpinner, IonIcon, AlertController
@@ -9,30 +8,7 @@ import {
 import { addIcons } from 'ionicons';
 import { moon, sunny } from 'ionicons/icons';
 import { jsPDF } from 'jspdf';
-
-// Fecha de hoy en formato 'YYYY-MM-DD', el mismo que usa <input type="date">
-function hoyISO(): string {
-  const d = new Date();
-  const mes = String(d.getMonth() + 1).padStart(2, '0');
-  const dia = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mes}-${dia}`;
-}
-
-// Validador personalizado: da error si la fecha es posterior a hoy
-function fechaNoFutura(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) return null;          // si está vacía, eso lo controla 'required'
-  return control.value > hoyISO() ? { fechaFutura: true } : null;
-}
-
-// Resumen SHA-256 en hexadecimal con la Web Crypto API del navegador (no necesita librerías).
-// Es un hash de un solo sentido: no se puede "descifrar" para recuperar la contraseña original.
-async function hashSHA256(texto: string): Promise<string> {
-  const bytes = new TextEncoder().encode(texto);
-  const hash = await crypto.subtle.digest('SHA-256', bytes);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
+import { hoyISO, fechaNoFutura, hashSHA256 } from '../shared/validadores';
 
 interface DatosRegistro {
   nombre: string;
@@ -46,7 +22,7 @@ interface DatosRegistro {
   styleUrls: ['registro.page.scss'],
   standalone: true,
   imports: [
-    ReactiveFormsModule,
+    ReactiveFormsModule, RouterLink,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
     IonList, IonItem, IonInput, IonButton, IonSpinner, IonIcon
   ],

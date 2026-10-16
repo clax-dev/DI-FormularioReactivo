@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { RegistroPage } from './registro.page';
 
@@ -7,6 +8,8 @@ describe('RegistroPage', () => {
   let fixture: ComponentFixture<RegistroPage>;
 
   beforeEach(async () => {
+    // La página usa routerLink, así que el test necesita un router
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
     fixture = TestBed.createComponent(RegistroPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
